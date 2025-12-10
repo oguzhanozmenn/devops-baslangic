@@ -1,0 +1,24 @@
+name: Docker CI İşlemleri
+
+# Bu robot ne zaman çalışsın?
+on:
+  push:
+    branches: [ "main" ] # Main dalına her kod atıldığında çalış!
+
+# Hangi işleri yapacak?
+jobs:
+  build-test:
+    runs-on: ubuntu-latest  # GitHub'ın Linux sunucularında çalışsın
+
+    steps:
+    # 1. Adım: Bizim kodları depodan çek
+    - name: Kodları Çek (Checkout)
+      uses: actions/checkout@v3
+
+    # 2. Adım: Docker imajını oluştur (Build)
+    - name: Docker İmajını Oluştur
+      run: docker build . --file Dockerfile --tag benim-uygulamam:latest
+
+    # 3. Adım: Basit bir test yap (İmaj oluştu mu?)
+    - name: İmaj Listesini Göster
+      run: docker images
