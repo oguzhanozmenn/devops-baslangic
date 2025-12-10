@@ -1,0 +1,21 @@
+version: "3.8"
+
+services:
+  web-uygulamasi:
+    build: .
+    ports:
+      - "5001:5000"
+    depends_on:
+      - redis
+    volumes:
+      - .:/app
+
+  redis:
+    image: "redis:alpine"
+    # YENİ EKLEME: Redis'in verileri kaydettiği /data klasörünü, bizim oluşturduğumuz hacime bağla
+    volumes:
+      - redis_verisi:/data
+
+# YENİ EKLEME: Sisteme yeni bir depolama alanı tanımla
+volumes:
+  redis_verisi:
