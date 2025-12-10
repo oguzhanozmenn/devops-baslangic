@@ -1,24 +1,31 @@
-name: Docker CI İşlemleri
+name: CI/CD Boru Hattı
 
-# Bu robot ne zaman çalışsın?
 on:
   push:
-    branches: [ "main" ] # Main dalına her kod atıldığında çalış!
+    branches: [ "main" ]
 
-# Hangi işleri yapacak?
 jobs:
-  build-test:
-    runs-on: ubuntu-latest  # GitHub'ın Linux sunucularında çalışsın
+  deploy:
+    runs-on: ubuntu-latest
 
     steps:
-    # 1. Adım: Bizim kodları depodan çek
-    - name: Kodları Çek (Checkout)
+    - name: Kodları Çek
       uses: actions/checkout@v3
 
-    # 2. Adım: Docker imajını oluştur (Build)
-    - name: Docker İmajını Oluştur
-      run: docker build . --file Dockerfile --tag benim-uygulamam:latest
+    # Bu adım opsiyoneldir, sadece kodda hata var mı diye bakar
+    - name: Basit Test
+      run: echo "Kodlar GitHub'a ulaştı, dağıtıma başlıyoruz..."
 
-    # 3. Adım: Basit bir test yap (İmaj oluştu mu?)
-    - name: İmaj Listesini Göster
-      run: docker images
+    # İşte BÜYÜLÜ KISIM: SSH ile Sunucuya Bağlanma
+    - name: Sunucuya Bağlan ve Güncelle
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: ${{ secrets.HOST_IP }}      # GitHub Secret'tan IP'yi al
+        username: ${{ secrets.USERNAME }} # GitHub Secret'tan 'ubuntu'yu al
+        key: ${{ secrets.EC2_SSH_KEY }}   # GitHub Secret'tan Anahtarı al
+        port: 22
+        # Sunucunun içinde çalıştırılacak komutlar:
+        script: |
+          cd devops-baslangic
+          git pull origin main
+          sudo docker compose up -d --build

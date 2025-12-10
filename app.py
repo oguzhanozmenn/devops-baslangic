@@ -14,7 +14,7 @@ def hello():
     except Exception as e:
         return "Veritabanına bağlanılamadı! Redis çalışıyor mu?"
 
-    return f"Merhaba Oguzhan! Bu sayfayı şu ana kadar {count} kez görüntüledin."
+    return f"Merhaba Oguzhan! CI/CD Otomasyonu BASARIYLA TAMAMLANDI! Sayac: {count}"
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000)
